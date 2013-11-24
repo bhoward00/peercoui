@@ -3,6 +3,7 @@ from flask.ext.wtf import InputRequired, Email, EqualTo
 from app.users.models import User
 from app.records.models import Records
 from app import db
+from db import *
 
 
 
@@ -15,12 +16,12 @@ def pairup(mylist):
 
 
 class SelectRecord(Form):
-    rid = RadioField("Record Select", choices=[], validators=[InputRequired()])
+    rid = RadioField("Record Select", choices=[], coerce=int,validators=[InputRequired()])
 
     def validate(self):
 	if not Form.validate(self):
 	    return False
-	if session.query(Records.id).filter(Record.id == self.rid.data):
+	if session.query(Records.id).filter(Records.id == self.rid.data):
 	    return True
 	else:
 	    return False

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %} - Home{% endblock %}
+{% block content %}
+{% from "forms/macros.html" import render_field %}
+{% if not current_user.is_authenticated() %}
+     <p>You are not logged in. Please <a href="/login">log in</a> or <a href="/register">sign up</a>. Its Free!</p>
+{% else %}
+    <p> Click <a href="/select/">here</a> to continue</p>
+{% endif %}
+{% endblock %}

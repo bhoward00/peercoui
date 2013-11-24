@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %} - Home{% endblock %}
+{% block content %}
+{% from "forms/macros.html" import render_field %}
+{% if not current_user.is_authenticated() %}
+     <p>You are not logged in. Please <a href="/login">log in</a> or <a href="/register">sign up</a>.</p>
+{% else %}
+    <form method="POST" action="." class="form form-horizontal" name="select">
+	<h1>Select a record to edit:</h1>
+	{{ form.hidden_tag() }}
+	{{ render_field(form.rid, class="form-control") }}
+	<button type="submit" name="btn" class="btn" value="Check Out">Check Out</button>
+	<button type="submit" name="btn" class="btn" value="Check In">Check In</button>
+    </form> 
+{% endif %}
+{% endblock %}

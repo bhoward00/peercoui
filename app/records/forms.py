@@ -17,6 +17,7 @@ def pairup(mylist):
 
 class SelectRecord(Form):
     rid = RadioField("Record Select", choices=[], coerce=int,validators=[InputRequired()])
+    #rid = RadioField("Record Select", choices=[(1,"fuckshit"),(2,"cuntpiss"),(3,"cocksucker")], coerce=int,validators=[InputRequired()])
 
     def validate(self):
 	if not Form.validate(self):

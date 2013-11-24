@@ -47,26 +47,30 @@ def getChoicesFromField(field):
 @mod.route('/select/', methods=('GET', 'POST'))
 @login_required
 def select_view():
+    form = SelectRecord(request.form)
     mychoices = []
     # determine which cases are checked out by user, pass them as options along with a "next"
-    recs_co = session.query(Records.id).filter(Records.editing_uid == current_user.id).filter(Records.locked == True)
-    form = SelectRecord(request.form)
+    recs_co = session.query(Records.id).filter(Records.editing_uid == current_user.id).  \
+	filter(Records.locked == True)
+    for x in recs_co:
+	mychoices.append((x.rid,"%s: %s (%s)" % (x.peerco, x.title, x.district, x.casenumber)))
+    x = getNextRecord()
+    mychoices.append((x.id,"%s: %s (%s %s)" % (x.peerco, x.title, x.district, x.casenumber)))
+    form.rid.choices = mychoices
     if form.validate_on_submit():
-	rid = form.data.rid
+	r = form.rid.data
+	app.logger.debug("rid = %d" % r)
 	if form['btn'] == "checkout":
 	    # check out the requested record
-	    Records.checkoutRecord(rid)
+	    Records.checkoutRecord(r)
 	    #return redirect('/record/edit.html')
-	    return render_template('/records/edit.html',rid=rid)
+	    return render_template('/records/edit.html',rid=r)
 	elif form['btn'] == "checkin":
-	    Records.checkinRecord(rid)
+	    Records.checkinRecord(r)
 	    flash("Record checked in.")
+	    return render_template('records/select.html', form=form)
     else:
-	for x in recs_co:
-	    mychoices.append((x.rid,"%s: %s (%s)" % (x.peerco, x.title, x.district, x.casenumber)))
-	x = getNextRecord()
-	mychoices.append((x.id,"%s: %s (%s %s)" % (x.peerco, x.title, x.district, x.casenumber)))
-	form.rid.choices = mychoices
+	print form.errors
 	return render_template('records/select.html', form=form)
 
 
@@ -90,19 +94,4 @@ def edit_view(rid):
         return redirect('/select/')
     return render_template('records/edit.html', form=form)
 
-
-#@mod.route('/records/', methods=('GET', 'POST'))
-#@login_required
-#def records_view():
-#    record = db.session.query(Records).filter(
-#    form = EditSomeRecords(request.form,record)
-#    #sites = current_user.sites.all()
-#    if form.validate_on_submit():
-#	# turn the form back into an object
-#        record = Records()
-#        form.populate_obj(record)
-#        session.add(record)
-#        session.commit()
-#        return redirect('/select/')
-#    return render_template('records/edit.html', form=form)
 

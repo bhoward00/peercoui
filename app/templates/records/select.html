@@ -7,10 +7,10 @@
 {% else %}
     <form method="POST" action="/select/" class="form form-horizontal" name="select_view">
 	<h1>Select a record to edit:</h1>
-	{{ render_field(form.rid, class="form-control") }}
+	<div>{{ render_field(form.rid, class="form-control") }}</div>
 	{{ form.hidden_tag() }}
-	<button type="submit" name="btn" class="btn" value="Check Out">Check Out</button>
-	<button type="submit" name="btn" class="btn" value="Check In">Check In</button>
+	<div>{{ render_field(form.cosub, class="btn") }}</div><BR>
+	<div>{{ render_field(form.cisub, class="btn") }}</div>
     </form> 
 {% endif %}
 {% endblock %}

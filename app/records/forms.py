@@ -1,4 +1,4 @@
-from flask.ext.wtf import Form, TextField, BooleanField, SelectField, HiddenField, RadioField,fields, validators
+from flask.ext.wtf import Form, TextField, BooleanField, SelectField, HiddenField, RadioField, SubmitField,fields, validators
 from flask.ext.wtf import InputRequired, Email, EqualTo
 from app.users.models import User
 from app.records.models import Records
@@ -17,7 +17,8 @@ def pairup(mylist):
 
 class SelectRecord(Form):
     rid = RadioField("Record Select", choices=[], coerce=int,validators=[InputRequired()])
-    #rid = RadioField("Record Select", choices=[(1,"fuckshit"),(2,"cuntpiss"),(3,"cocksucker")], coerce=int,validators=[InputRequired()])
+    cosub = SubmitField("Check Out")
+    cisub = SubmitField("Check In")
 
     def validate(self):
 	if not Form.validate(self):

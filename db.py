@@ -8,7 +8,6 @@ session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=en
 Base = declarative_base()
 Base.query = session.query_property()  # nick doesn't like using this
 Base.metadata.bind = engine
-#metadata = MetaData(bind=engine)
 
 
 
@@ -16,5 +15,4 @@ Base.metadata.bind = engine
     # import all modules here that might define models so that
     # they will be registered properly on the metadata.  Otherwise
     # you will have to import them first before calling init_db()
-#    from app import users, records
-    #Base.metadata.create_all(bind=engine)
+    #from app import users, records

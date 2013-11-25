@@ -1,6 +1,6 @@
 {% macro render_field(field) %}
     <div class="control-group">
-    {# {{ field.label(class="control-label") }} #}
+    {{ field.label(class="control-label") }}
     {% if field.errors %}
         {% set css_class = 'has_error ' + kwargs.pop('class', '') %}
         {{ field(class=css_class, **kwargs) }}

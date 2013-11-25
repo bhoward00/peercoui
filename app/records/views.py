@@ -13,21 +13,11 @@ from datetime import datetime
 mod = Blueprint('records', __name__)
 
 
+def sfrToList(rs):
+    return map(lambda l: l[0],rs)
 
 
 
-def checkoutRecord(rid):
-    if (rid not in session.query(Records.id)) or (not session.query(Records.locked).filter(Records.id == rid)):
-	r = session.query(Records).filter(Records.id==rid)
-	r.editing_uid = current_user.id
-	r.date_out = datetime.now()
-	session.commit()
-
-def checkinRecord(rid):
-    r = session.query(Records).filter(Records.id==rid)
-    r.editing_uid = current_user.id
-    r.date_in = datetime.now()
-    session.commit()
 
 
 
@@ -60,13 +50,25 @@ def select_view():
     if form.validate_on_submit():
 	r = form.rid.data
 	app.logger.debug("rid = %d" % r)
-	if form['btn'] == "checkout":
+	rec = session.query(Records).filter(Records.id==r).first()
+	if not rec:
+	    flash("Record not found")
+	    return render_template('records/select.html', form=form)
+	if form.cosub:
 	    # check out the requested record
-	    Records.checkoutRecord(r)
+	    if rec.locked:
+		flash("Record already locked by %s" % session.query(User.name).\
+		    filter(User.id==rec.editing_uid).first()[0])
+		return render_template('records/select.html', form=form)
+	    n = rec.checkoutRecord(current_user.id)
+	    session.add(n)
+	    session.commit()
 	    #return redirect('/record/edit.html')
 	    return render_template('/records/edit.html',rid=r)
-	elif form['btn'] == "checkin":
-	    Records.checkinRecord(r)
+	elif form.cisub:
+	    n = rec.checkinRecord(current_user.id)
+	    session.add(n)
+	    session.commit()
 	    flash("Record checked in.")
 	    return render_template('records/select.html', form=form)
     else:

@@ -1,5 +1,5 @@
-from app import db
-from db import Base
+#from app import db
+from db import Base,session
 from app.mixins import CRUDMixin
 from flask.ext.login import UserMixin
 from sqlalchemy import *

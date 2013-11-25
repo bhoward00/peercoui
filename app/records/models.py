@@ -1,4 +1,4 @@
-from app import db
+#from app import db
 from db import session, Base
 from flask.ext.login import UserMixin, current_user
 from app.mixins import CRUDMixin

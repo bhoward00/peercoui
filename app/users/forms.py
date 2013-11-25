@@ -1,7 +1,8 @@
 from flask.ext.wtf import Form, fields, validators
 from flask.ext.wtf import Required, Email
 from app.users.models import User
-from app import db
+#from app import db
+from db import Base, session
 
 
 def validate_login(form, field):

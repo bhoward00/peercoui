@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template, send_from_directory
-from flask.ext.sqlalchemy import SQLAlchemy
+#from flask.ext.sqlalchemy import SQLAlchemy
 #from flask.ext.heroku import Heroku
 from flask.ext.login import LoginManager, current_user
 import os
@@ -15,7 +15,8 @@ app.config.from_object('config.BaseConfiguration') #load our local config file
 
 login_manager = LoginManager(app) #create a LoginManager Object from our app object
 
-db = SQLAlchemy(app) #create a db (SQLAlchemy) object from our app object
+#db = SQLAlchemy(app) #create a db (SQLAlchemy) object from our app object
+    ######## flask is breaking sqlalchemy commit
 
 #register the users module blueprint
 from app.users.views import mod as usersModule

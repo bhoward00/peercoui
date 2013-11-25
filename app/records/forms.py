@@ -2,8 +2,8 @@ from flask.ext.wtf import Form, TextField, BooleanField, SelectField, HiddenFiel
 from flask.ext.wtf import InputRequired, Email, EqualTo
 from app.users.models import User
 from app.records.models import Records
-from app import db
-from db import *
+#from app import db
+from db import Base, session
 
 
 

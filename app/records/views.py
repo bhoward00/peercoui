@@ -1,7 +1,7 @@
 from flask import Blueprint, Response, render_template, flash, redirect, session, url_for, request
 from flask.ext.login import current_user, login_required
 from app import app, login_manager
-from app import db
+#from app import db
 from app.records.models import Records
 from app.records.forms import EditSomeRecords, SelectRecord
 from db import session, Base

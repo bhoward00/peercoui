@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
-from app import app, db, login_manager
+#from app import app, db, login_manager
+from app import app, login_manager
+from db import Base, session
 from forms import LoginForm, RegistrationForm
 from app.users.models import User
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -31,8 +33,8 @@ def register_view():
         user = User()
         form.populate_obj(user)
 	#user.password = generate_password_hash(user.password)
-        db.session.add(user)
-        db.session.commit()
+        session.add(user)
+        session.commit()
         login_user(user)
         return redirect(url_for('index'))
     return render_template('users/register.html', form=form)

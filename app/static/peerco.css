@@ -1,0 +1,39 @@
+body { 
+    padding-top: 60px; 
+} 
+
+#main { 
+    padding-top: 60px; 
+} 
+
+#content { 
+    padding-top: 120px; 
+} 
+
+.accordian-toggle a:hover {
+    text-decoration: none !important;
+} 
+
+.collapsed .icon-collapse-alt {
+    display: none;
+}
+
+.collapsed .icon-expand-alt {
+    display: inline !important;
+}
+
+.icon-expand-alt {
+    display: none !important;
+}
+
+.leftj {
+    text-align: left;
+}
+
+.btn {
+    padding: 10px 10px 10px 10px; /* top right bottom left */
+}
+
+
+
+

@@ -5,6 +5,7 @@
 {% if not current_user.is_authenticated() %}
      <p>You are not logged in. Please <a href="/login">log in</a> or <a href="/register">sign up</a>.</p>
 {% else %}
+    <div class="main">
     <form method="POST" action="/select/" class="form form-horizontal" name="select_view">
 	<h1>Select a record to edit:</h1>
 	<div>{{ render_field(form.rid, class="form-control") }}</div>
@@ -12,5 +13,6 @@
 	<div>{{ render_field(form.cosub, class="btn") }}</div><BR>
 	<div>{{ render_field(form.cisub, class="btn") }}</div>
     </form> 
+    </div>
 {% endif %}
 {% endblock %}

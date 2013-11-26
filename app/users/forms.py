@@ -1,4 +1,4 @@
-from flask.ext.wtf import Form, fields, validators
+from flask.ext.wtf import Form, fields, validators, Length
 from flask.ext.wtf import Required, Email
 from app.users.models import User
 #from app import db
@@ -26,6 +26,7 @@ class LoginForm(Form):
 class RegistrationForm(Form):
     name = fields.TextField(validators=[Required()])
     email = fields.TextField(validators=[Email()])
+    initials = fields.TextField(validators=[Required(),Length(min=2,max=3)])
     password = fields.PasswordField(validators=[Required()])
     conf_password = fields.PasswordField(validators=[Required()])
 

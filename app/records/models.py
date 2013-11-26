@@ -6,9 +6,11 @@ from sqlalchemy import *
 from datetime import datetime
 
 
-def getValuesFromField(field):
-    return session.query(field).distinct()
 
+# turn single-field row results from query.first() to a straight up list:
+#   ((1,),(2,),(3,)) to (1,2,3)
+def sfrToList(rs):
+    return map(lambda l: l[0],rs)
 
 
 class Records(UserMixin, CRUDMixin, Base):
@@ -24,3 +26,7 @@ class Records(UserMixin, CRUDMixin, Base):
 	self.editing_uid = uid
 	self.date_in = datetime.now()
 	return self
+
+    @staticmethod
+    def getValuesFromField(field):
+	return sfrToList(session.query(getattr(Records,field)).distinct())

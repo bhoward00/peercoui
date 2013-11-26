@@ -20,7 +20,6 @@ def login_view():
     form = LoginForm(request.form)
     if form.validate_on_submit():
         user = form.get_user()
-	#user.password = generate_password_hash(user.password)
         login_user(user)
         flash("Logged in successfully.")
         return redirect(request.args.get("next") or url_for("index"))
@@ -32,7 +31,7 @@ def register_view():
     if form.validate_on_submit():
         user = User()
         form.populate_obj(user)
-	#user.password = generate_password_hash(user.password)
+	user.initials = user.initials.upper()
         session.add(user)
         session.commit()
         login_user(user)

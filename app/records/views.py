@@ -13,13 +13,9 @@ from datetime import datetime
 mod = Blueprint('records', __name__)
 
 
-def sfrToList(rs):
-    return map(lambda l: l[0],rs)
-
-
-
-
-
+# turn a sqlalchemy row into a dict by field-name
+row2dict = lambda r: {c.name: getattr(r,c.name) for c in r.__table__.columns}
+    
 
 def getNextRecord():
     # unreviewed records
@@ -27,9 +23,13 @@ def getNextRecord():
     # logic to split things intelligently
 
 
-
-def getChoicesFromField(field):
-    return session.query(distinct(Records.field))
+def listToChoices(l, bAddNull=False):
+    mychoices = []
+    for x in l:
+	mychoices.append((x,x))
+    if bAddNull:
+	mychoices.append((None,""))
+    return mychoices
     
 
 
@@ -63,8 +63,9 @@ def select_view():
 	    n = rec.checkoutRecord(current_user.id)
 	    session.add(n)
 	    session.commit()
-	    #return redirect('/record/edit.html')
-	    return render_template('/records/edit.html',rid=r)
+	    flash("Record checked out")
+	    return redirect("/edit/%d" % n.id)
+	    #return render_template('/records/edit.html',rid=r)
 	elif form.cisub:
 	    n = rec.checkinRecord(current_user.id)
 	    session.add(n)
@@ -80,20 +81,46 @@ def select_view():
 @mod.route('/edit/<rid>', methods=('GET', 'POST'))
 @login_required
 def edit_view(rid):
-    record = session.query(Records).filter(Record.id == rid)
+    record = session.query(Records).filter(Records.id == rid).first()
     form = EditSomeRecords(request.form)
 
-    # fill out the choices
-    form.final_action.choices = getChoicesFromField('final_action')
-    form.phase.choices = getChoicesFromField('phase')
+    # set choices
+    form.phase.choices = listToChoices(Records.getValuesFromField('phase'))
+    form.final_action.choices = listToChoices(Records.getValuesFromField('final_action'))
 
+    #set defaults - consider moving below validation to not clobber selections if problem
+    form.status.default = "Done"+ current_user.initials
+    form.filed_on.default = record.filed_on
+    form.terminated_on.default = record.terminated_on
+    form.term_de.default = record.term_de
+    form.is_early.default = record.is_early
+    form.is_child.default = record.is_child
+    form.is_stayed.default = record.is_stayed
+    form.is_settled.default = record.is_settled
+    form.final_action.default = record.final_action
+    form.phase.default = record.phase
+    form.damages.default = record.damages
+    form.ent_type.default = record.ent_type
+    form.is_dj.default = record.is_dj
+    form.claimant.default = record.claimant
+    form.claimdef.default = record.claimdef
+    form.notes.default = record.notes
     if form.validate_on_submit():
 	# turn the form back into an object
-        record = Records()
-        form.populate_obj(record)
-        session.add(record)
-        session.commit()
+	if form.save:
+	    form.populate_obj(record)
+	    session.add(record)
+	    session.commit()
         return redirect('/select/')
-    return render_template('records/edit.html', form=form)
+    caseinfo = {
+	'rid'	    : record.id,
+	'title'	    : record.title, 
+	'caseno'    : record.casenumber, 
+	'peerco'    : record.peerco, 
+	'district'  : record.district,
+	'caseid'    : record.iplc_case_id, 
+	'filed_on'  : record.filed_on, 
+	'origin'    : record.origin }
+    return render_template('records/edit.html', form=form, caseinfo=caseinfo)
 
 

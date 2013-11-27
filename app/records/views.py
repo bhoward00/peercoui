@@ -3,7 +3,7 @@ from flask.ext.login import current_user, login_required
 from app import app, login_manager
 #from app import db
 from app.records.models import Records, Edits
-from app.records.forms import EditSomeRecords, SelectRecord
+from app.records.forms import EditSomeRecords, SelectRecord, AutoIncrement
 from db import session, Base
 from datetime import datetime
 
@@ -122,6 +122,6 @@ def edit_view(rid):
 	'caseid'    : record.iplc_case_id, 
 	'filed_on'  : record.filed_on, 
 	'origin'    : record.origin }
-    return render_template('records/edit.html', form=form, caseinfo=caseinfo)
+    return render_template('records/edit.html', form=form, caseinfo=caseinfo, idx=AutoIncrement())
 
 

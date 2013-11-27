@@ -5,6 +5,7 @@ from app.records.models import Records
 #from app import db
 from db import Base, session
 from app.validators import RequiredIf, RequiredIfNot
+from app import app
 
 
 
@@ -13,6 +14,14 @@ def pairup(mylist):
 	out.append((x,x))
     return out
 
+
+class AutoIncrement():
+    def __init__(self):
+	self.count = 1;
+	app.logger.debug("new ai")
+    def next(self):
+	self.count = self.count +1
+	return self.count
 
 
 

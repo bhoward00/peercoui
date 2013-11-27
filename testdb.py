@@ -25,6 +25,8 @@ class Records(Base):
 class User(Base):
     __table__ = Table('users_user', Base.metadata, autoload=True)
 
+class Edits(Base):
+    __table__ = Table('edits', Base.metadata, autoload=True)
 
 
 os.environ['PYTHONINSPECT'] = 'True'

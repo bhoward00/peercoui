@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, send_from_directory
 #from flask.ext.sqlalchemy import SQLAlchemy
 #from flask.ext.heroku import Heroku
 from flask.ext.login import LoginManager, current_user
+from db import Base, session
 import os
 
 
@@ -90,6 +91,9 @@ def log_entry():
 def log_exit(exc):
     app.logger.debug("Finished handling request", exc_info=exc)
 
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    session.remove()
 
 #----------------------------------------
 # logging

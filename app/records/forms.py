@@ -1,9 +1,10 @@
 from flask.ext.wtf import Form, TextField, BooleanField, SelectField, HiddenField, RadioField, DateField, SubmitField,fields, validators, IntegerField, NumberRange, Length
-from flask.ext.wtf import InputRequired, Email, EqualTo
+from flask.ext.wtf import InputRequired, Email, EqualTo, Optional
 from app.users.models import User
 from app.records.models import Records
 #from app import db
 from db import Base, session
+from app.validators import RequiredIf, RequiredIfNot
 
 
 
@@ -16,17 +17,19 @@ def pairup(mylist):
 
 
 class SelectRecord(Form):
-    rid = RadioField("Record Select", choices=[], coerce=int,validators=[InputRequired()])
+    #rid = RadioField("Record Select", choices=[], coerce=int,validators=[RequiredIfNot('newsub')])
+    rid = RadioField("Record Select", choices=[], coerce=int,validators=[Optional()])
     cosub = SubmitField("Check Out")
     cisub = SubmitField("Check In")
+    newsub = SubmitField("Check Out New Record")
 
-    def validate(self):
-	if not Form.validate(self):
-	    return False
-	if session.query(Records.id).filter(Records.id == self.rid.data):
-	    return True
-	else:
-	    return False
+#    def validate(self):
+#	if not Form.validate(self):
+#	    return False
+#	if session.query(Records.id).filter(Records.id == self.rid.data):
+#	    return True
+#	else:
+#	    return False
     
 ###  debug - disable csrf
 #    def __init__(self,*args,**kwargs):

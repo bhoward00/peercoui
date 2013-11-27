@@ -4,6 +4,7 @@ from flask.ext.login import UserMixin, current_user
 from app.mixins import CRUDMixin
 from sqlalchemy import *
 from datetime import datetime
+from app.users.models import User
 
 
 
@@ -13,19 +14,39 @@ def sfrToList(rs):
     return map(lambda l: l[0],rs)
 
 
+
+
+class Edits(UserMixin, CRUDMixin, Base):
+    __table__ = Table('edits', Base.metadata, autoload=True)
+
+    def __init__(self, uid, rid):
+	self.uid = uid
+	self.rid = rid
+
+
 class Records(UserMixin, CRUDMixin, Base):
     __table__ = Table('main_records', Base.metadata, autoload=True)
 
 
     def checkoutRecord(self,uid):
-	self.editing_uid = uid
-	self.date_out = datetime.now()
-	return self
+	
+	check = session.query(Edits).filter(Edits.uid==uid).filter(Edits.rid==self.id).filter(Edits.date_in == None).first()
+	if check:
+	    return "Record already checked out by %s" % session.query(User.name).filter(User.id==uid).first()[0]
+	else:
+	    edit = Edits(uid,self.id)
+	    edit.date_out = datetime.now()
+	    edit.date_in = None
+	    session.add(edit)
+	    session.commit()
+	    return "Record checked out"
 
     def checkinRecord(self,uid):
-	self.editing_uid = uid
-	self.date_in = datetime.now()
-	return self
+	edit = session.query(Edits).filter(Edits.uid==uid).filter(Edits.rid==self.id).\
+	    filter(Edits.date_in == None).first()
+	edit.date_in = datetime.now()
+	session.add(edit)
+	session.commit()
 
     @staticmethod
     def getValuesFromField(field):

@@ -7,11 +7,26 @@
 {% else %}
     <div class="main">
     <form method="POST" action="/select/" class="form form-horizontal" name="select_view">
-	<h1>Select a record to edit:</h1>
-	<div>{{ render_field(form.rid, class="form-control") }}</div>
 	{{ form.hidden_tag() }}
-	<div>{{ render_field(form.cosub, class="btn") }}</div><BR>
-	<div>{{ render_field(form.cisub, class="btn") }}</div>
+	<h1>Select a record to edit:</h1>
+	  {% if checked_out_records %}
+	    <div class=form-control>
+	    <h2>Checked out Records:</h2>
+	      <div>{{ render_field(form.rid) }}</div>
+              <div>{{ render_field(form.cosub, class="btn") }}</div><BR>
+	      <div>{{ render_field(form.cisub, class="btn") }}</div>
+	    </div>
+	  {% else %}
+	    <p>No records currently checked out</p>
+	  {% endif %}
+	  {% if newrec %}
+	      <div><p>{{ render_field(form.newsub, class="btn btn-primary") }}</p></div>
+	  {% else %}
+	      <div>
+	      <h2>No new records available</h2>
+	      </div>
+	  {% endif %}
+
     </form> 
     </div>
 {% endif %}

@@ -34,6 +34,9 @@ body {
     padding: 10px 10px 10px 10px; /* top right bottom left */
 }
 
+.btn-primary {
+    .buttonBackground(Blue, DarkBlue);
+}
 
 
 

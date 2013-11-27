@@ -32,6 +32,7 @@ def register_view():
         user = User()
         form.populate_obj(user)
 	user.initials = user.initials.upper()
+	user.generate_password_hash(user.password)
         session.add(user)
         session.commit()
         login_user(user)

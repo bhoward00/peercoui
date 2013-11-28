@@ -10,6 +10,7 @@ from app.users.models import User
 
 # turn single-field row results from query.first() to a straight up list:
 #   ((1,),(2,),(3,)) to (1,2,3)
+
 def sfrToList(rs):
     return map(lambda l: l[0],rs)
 
@@ -32,7 +33,8 @@ class Records(UserMixin, CRUDMixin, Base):
 
 
     def checkout(self,uid):
-	check = session.query(Edits).filter(Edits.uid==uid).filter(Edits.rid==self.id).filter(Edits.date_in == None).first()
+	check = session.query(Edits).filter(Edits.uid==uid).filter(Edits.rid==self.id).\
+	    filter(Edits.date_out != None).filter(Edits.date_in == None).first()
 	if check:
 	    return "Record already checked out by %s" % session.query(User.name).filter(User.id==uid).first()[0]
 	else:
@@ -41,15 +43,24 @@ class Records(UserMixin, CRUDMixin, Base):
 	    edit.date_in = None
 	    session.add(edit)
 	    session.commit()
+	    #self.status="%s-done" % session.query(User).filter(id=uid).first().initials
+	    #session.add(self)
 	    return "Record checked out"
 
-    def checkin(self,uid):
+    def checkin(self,uid, bStatusDone=False):
 	edit = session.query(Edits).filter(Edits.uid==uid).filter(Edits.rid==self.id).\
 	    filter(Edits.date_in == None).first()
 	edit.date_in = datetime.now()
 	session.add(edit)
 	session.commit()
+	if bStatusDone:
+	    self.status="%s-done" % session.query(User).filter(User.id==uid).first().initials
+	    session.add(self)
+	    session.commit()
 
     @staticmethod
-    def getValuesFromField(field):
-	return sfrToList(session.query(getattr(Records,field)).distinct())
+    def getValuesFromField(f):
+	return sfrToList( session.query(getattr(Records,f)).distinct().all() )
+
+
+

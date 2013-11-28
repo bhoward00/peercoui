@@ -49,18 +49,18 @@ class SelectRecord(Form):
 class EditForm(Form):
 	# rather than passing in an obj to populate, I want dynamic population for choices & defaults
 	# these are set in views.py after the form is created, before validate_on_submit
-    status	    = SelectField("Status",
-			choices=[   ('AutoReviewed','AutoReviewed'),
-				    ('BHdone','BHdone'),
-				    ('JMdone','JMdone'),
-				    ('CRdone','CRdone'),
-				    ('2d-pass','2d-pass')]
-			,validators=[InputRequired()])
+
+#    status	    = SelectField("Status",
+#			choices=[   ('AutoReviewed','AutoReviewed'),
+#				    ('BHdone','BHdone'),
+#				    ('JMdone','JMdone'),
+#				    ('CRdone','CRdone'),
+#				    ('2d-pass','2d-pass')]
+#			,validators=[InputRequired()])
     filed_on	    = DateField("Filed Date", validators=[InputRequired()])
     terminated_on   = DateField("Termination Date", validators=[InputRequired()])
     term_de	    = IntegerField("Terminating DE for Peer",
 			validators=[InputRequired(),NumberRange(min=0)])
-    is_early	    = BooleanField("Is early?", validators=[InputRequired()])
     is_child	    = BooleanField("Is child?", validators=[InputRequired()])
     is_stayed	    = BooleanField("Is stayed?", validators=[InputRequired()])
     is_settled	    = BooleanField("Is settled?", validators=[InputRequired()])

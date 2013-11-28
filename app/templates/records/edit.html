@@ -8,7 +8,7 @@
   {% if not rec %}
     Something terrible has happened...
   {% else %}
-    <form method="POST" action="/edit/{{ rec.rid }}" class="form form-horizontal" name="edit_view">
+    <form method="POST" action="/edit/{{ rec.id }}" class="form form-horizontal" name="edit_view">
     {{ form.hidden_tag() }}
     <div><h2> {{ rec.title }} </h2></div>
     <div><small> 
@@ -22,7 +22,7 @@
       <p><b>Record origin:</b> {{ rec.origin }}</p>
     </div></small>
 
-    <div class=block>{{ rf_w_label(form.status, tabindex=idx.next(), class="form-control") }} </div>
+    {#<div class=block>{{ rf_w_label(form.status, tabindex=idx.next(), class="form-control") }} </div>#}
     <div class=block>{{ rf_w_label(form.filed_on, tabindex=idx.next(), class="form-control") }} </div>
     <div class=block>{{ rf_w_label(form.ent_type, tabindex=idx.next(), class="form-control") }} </div>
     <div class=block>{{ rf_w_label(form.terminated_on, tabindex=idx.next(), class="form-control") }} </div>

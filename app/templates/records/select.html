@@ -18,12 +18,7 @@
 	  {% else %}
 	    <div>No records currently checked out</div>
 	  {% endif %}
-	  {% if newrec %}
-	      {#<div>{{ form.newsub(class="btn btn-primary", name="btn") }}</div>#}
-	      <input type="submit" name="subbtn" class="btn btn-primary" value="{{form.newsub}}">
-	  {% else %}
-	      <div> <h2>No new records available</h2> </div>
-	  {% endif %}
+	  <input type="submit" name="subbtn" class="btn btn-primary" value="{{form.newsub}}">
 
     </form> 
     </div>

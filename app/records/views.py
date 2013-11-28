@@ -6,6 +6,7 @@ from app.records.models import Records, Edits
 from app.records.forms import EditForm, SelectRecord, AutoIncrement
 from db import session, Base
 from datetime import datetime
+import sqlalchemy
 
 
 
@@ -18,15 +19,15 @@ row2dict = lambda r: {c.name: getattr(r,c.name) for c in r.__table__.columns}
     
 
 def getNextRecord():
-    # unreviewed records
-    return  session.query(Records).join(Edits).filter(Records.status=='unreviewed').\
-	.first()
-	# TODO:  need to ensure record not already locked
-    # logic to split things intelligently
+    x = remainingRecords()
+    return x[0] if x else None
 
 def remainingRecords():
-    # unreviewed records
-    return  session.query(Records).filter(Records.status=='unreviewed').all()
+    # unreviewed records have no open edits - either in and out are both null (never edited) or 
+    # both are not null (edit has closed)
+    return  session.query(Records).join(Edits).filter(Records.status=='unreviewed').\
+	filter( ( (Edits.date_out==None) & (Edits.date_in==None) ) | \
+	    ( (Edits.date_out!=None) & (Edits.date_in!=None ) )  ).all()
 
 
 def listToChoices(l, bAddNull=False):
@@ -59,11 +60,15 @@ def select_view():
 	    mychoices.append((x.id,"Peer %s: %s (%s in %s) checked out on %s"\
 		% (x.peerco, x.title, x.casenumber, x.district, e.date_out)))
     form.rid.choices = mychoices
-    newrec = True if remainingRecords() else False
+    newrec = True
     if form.validate_on_submit():
 	if request.form['subbtn'] == form.newsub:
 	    #app.logger.debug("checkout new")
 	    rec = getNextRecord()
+	    if not rec:
+		flash("No more unreviewed records")
+		redirect("/select/")
+	    app.logger.debug("check out %d" % rec.id)
 	    msg = rec.checkout(current_user.id)
 	    flash(msg)
 	elif form.rid.data:
@@ -83,13 +88,14 @@ def select_view():
 	if form.errors:
 	    app.logger.debug(form.errors)
 	    flash("error")
-	return render_template('records/select.html', form=form, newrec=newrec, co_recs = checkouts)
+	return render_template('records/select.html', form=form, co_recs = checkouts)
 
 
 
 @mod.route('/edit/', methods=('GET', 'POST'))
 @login_required
 def fake():
+    app.logger.debug("empty /edit/ called - redirecting")
     return redirect("/select/")
 
 
@@ -100,41 +106,61 @@ def fake():
 @mod.route('/edit/<rid>', methods=('GET', 'POST'))
 @login_required
 def edit_view(rid):
+
+
+    #debug
     if(request.form.has_key('subbtn')):
 	subbtn = request.form['subbtn']
 	app.logger.debug("subbtn = %s" % subbtn)
     else:
 	app.logger.debug("no subbtn key")
+	subbtn=None
+
+
     rec = session.query(Records).filter(Records.id == rid).first()
     form = EditForm(request.form, obj=rec)
 
     # set choices
-    form.phase.choices = listToChoices(Records.getValuesFromField('phase'))
+    l = Records.getValuesFromField('phase')
+    form.phase.choices = listToChoices(l)
     form.final_action.choices = listToChoices(Records.getValuesFromField('final_action'))
 
     if form.validate_on_submit():
-	if subbtn != form.cancel:
-	    app.logger.debug("saving record")
-	    form.populate_obj(rec)
-	    session.add(rec)
-	    session.commit()
-	    rec.checkin(current_user.id)
-	else:
+	val = True
+    else:
+	val = False
+
+    if subbtn:
+	if subbtn == form.cancel:
 	    app.logger.debug("cancel")
 	    flash("Changes canceled")
 	    return redirect('/select/')
+	else:
+	    app.logger.debug("saving record")
+	    #form.populate_obj(rec)  # fucks up boolean nulls
+	    data = form.data
+	    for d in data:
+		print "ghetto populate: %s -> %s" % (d, data[d])
+		setattr(rec,d,data[d])
+	    if val and not subbtn==form.saveselect:
+		rec.status ="%s-done" % session.query(User).filter(id=uid).first().initials
+	    session.add(rec)
+	    session.commit()
 	if subbtn == form.savenext:
+	    rec.checkin(current_user.id)
 	    n = getNextRecord()
 	    msg = record.checkout(current_user.id)
 	    flash(msg)
 	    return redirect('/edit/%d' % n.id)
-	return redirect('/select/')
-    if form.errors:
-	app.logger.debug("oh shit:")
-	app.logger.debug(form.errors)
+	elif subbtn==form.saveselect:
+	    flash("Record saved but not checked in")
+	    return redirect('/select/')
+	    
+	if form.errors:
+	    app.logger.debug("oh shit:")
+	    app.logger.debug(form.errors)
 	flash("error")
-    app.logger.debug("edit form validation failed")
-    return render_template('records/edit.html', form=form, rec=rec, idx=AutoIncrement() ) #\
-	#isNull=lambda v: True if v==None else False)
+	app.logger.debug("edit form validation failed")
+    return render_template('records/edit.html', form=form, rec=rec, idx=AutoIncrement() ) 
 
 

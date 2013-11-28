@@ -24,7 +24,7 @@ class User(UserMixin, CRUDMixin,  Base):
 #        self.password = set_password(password)
 
     def __repr__(self):
-        return '<User %r>' % (self.name)
+        return '<User name=%r id=%d>' % (self.name,self.id)
 
 
     def set_password(self, password):

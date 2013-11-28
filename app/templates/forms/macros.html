@@ -11,7 +11,23 @@
     {% endif %}
     </div>
 {% endmacro %}
-{% macro render_with_label(field) %}
+
+{% macro rf_w_nullind(field,x) %}
+    <div class="control-group">
+    {{ field.label(class="control-label") }}
+    {% if field.errors %}
+        {% set css_class = 'has_error ' + kwargs.pop('class', '') %}
+        {{ field(class=css_class, **kwargs) }}
+        <ul class="errors">{% for error in field.errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
+    {% else %}
+    <div class="control-group">
+        {{ field(**kwargs) }} {% if x == None %} <small>Null value</small> {% endif %}
+    </div>
+    {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro rf_w_label(field) %}
     <div class="control-group">
     {{ field.label(class="control-label") }}
     {% if field.errors %}
@@ -24,4 +40,11 @@
     </div>
     {% endif %}
     </div>
+{% endmacro %}
+
+
+{% macro isNull(v) %}
+  {% if v == None %}
+    <small>NULL value</small>
+  {% endif %}
 {% endmacro %}

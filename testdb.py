@@ -27,6 +27,8 @@ class User(Base):
 
 class Edits(Base):
     __table__ = Table('edits', Base.metadata, autoload=True)
+    def __repr__(self): 
+	return "<Edit id=%d uid=%d rid=%d in=%s out=%s>" % (self.id, self.uid, self.rid, self.date_in, self.            date_out)
 
 
 os.environ['PYTHONINSPECT'] = 'True'

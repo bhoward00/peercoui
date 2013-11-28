@@ -24,12 +24,14 @@ class Edits(UserMixin, CRUDMixin, Base):
 	self.rid = rid
 
 
+    def __repr__(self):
+	return "<Edit id=%d uid=%d rid=%d in=%s out=%s>" % (self.id, self.uid, self.rid, self.date_in, self.date_out)
+
 class Records(UserMixin, CRUDMixin, Base):
     __table__ = Table('main_records', Base.metadata, autoload=True)
 
 
-    def checkoutRecord(self,uid):
-	
+    def checkout(self,uid):
 	check = session.query(Edits).filter(Edits.uid==uid).filter(Edits.rid==self.id).filter(Edits.date_in == None).first()
 	if check:
 	    return "Record already checked out by %s" % session.query(User.name).filter(User.id==uid).first()[0]
@@ -41,7 +43,7 @@ class Records(UserMixin, CRUDMixin, Base):
 	    session.commit()
 	    return "Record checked out"
 
-    def checkinRecord(self,uid):
+    def checkin(self,uid):
 	edit = session.query(Edits).filter(Edits.uid==uid).filter(Edits.rid==self.id).\
 	    filter(Edits.date_in == None).first()
 	edit.date_in = datetime.now()

@@ -1,42 +1,51 @@
 {% extends "base.html" %}
 {% block title %} - Edit Record{% endblock %}
 {% block content %}
-{% from "forms/macros.html" import render_with_label, render_field %}
+{% from "forms/macros.html" import rf_w_label, render_field, rf_w_nullind, isNull %}
 
 <div class=main>
   <h1>Edit Record:</h1>
-  {% if not caseinfo %}
+  {% if not rec %}
     Something terrible has happened...
   {% else %}
-    <form method="POST" action="/edit/{{ caseinfo.rid }}" class="form form-horizontal" name="edit_view">
+    <form method="POST" action="/edit/{{ rec.rid }}" class="form form-horizontal" name="edit_view">
     {{ form.hidden_tag() }}
-    <div><h2> {{ caseinfo.title }} </h2></div>
+    <div><h2> {{ rec.title }} </h2></div>
     <div><small> 
-      <p>IPLC id: <a href="http://law.lexmachina.com/cases/{{ caseinfo.caseid }}">Lex Machina: {{caseinfo.caseid}}</a></p>
-      <p>IPLC id: <a href="http://casetool.lexmachina.com/case/{{ caseinfo.caseid }}/">Casetool: {{ caseinfo.caseid }}</a></p>
-      <p>Cite: {{ caseinfo.caseno }} ({{caseinfo.district}}), filed: {{ caseinfo.filed_on }}</p>
-      <p>Peer: {{ caseinfo.peerco }}</p>
-      <p>Record origin: {{ caseinfo.origin }}</p>
+      <p><b>IPLC id:</b>  {{ rec.id }} 
+      <a href="http://law.lexmachina.com/cases/{{ rec.id }}">Lex Machina
+      </a>  | <a href="http://casetool.lexmachina.com/case/{{ rec.id }}/">Casetool
+      </a></p>
+      
+      <p><b>Cite:</b> {{ rec.caseno }} ({{rec.district}}), filed: {{ rec.filed_on }}</p>
+      <p><b>Peer:</b> {{ rec.peerco }}</p>
+      <p><b>Record origin:</b> {{ rec.origin }}</p>
     </div></small>
 
-    <div><p>{{ render_with_label(form.status, tabindex=idx.next(), class="form-control") }} </p></div>
-    <div><p>{{ render_with_label(form.filed_on, tabindex=idx.next(), class="form-control") }} </p></div>
-    <div><p>{{ render_with_label(form.ent_type, tabindex=idx.next(), class="form-control") }} </p></div>
-    <div><p>{{ render_with_label(form.terminated_on, tabindex=idx.next(), class="form-control") }} </p></div>
-    <div><p>{{ render_with_label(form.term_de, tabindex=idx.next(), class="form-control") }} </p></div>
-    <div><p>{{ render_with_label(form.is_child, tabindex=idx.next(), class="form-control") }} </p></div>
-    <div><p>{{ render_with_label(form.is_stayed, tabindex=idx.next(), class="form-control") }} </p></div>
-    <div><p>{{ render_with_label(form.is_settled, tabindex=idx.next(), class="form-control") }} </p></div>
-    <div><p>{{ render_with_label(form.is_dj, tabindex=idx.next(), class="form-control") }} </p></div>
-    <div><p>{{ render_with_label(form.claimant, tabindex=idx.next(), class="form-control") }} </p></div>
-    <div><p>{{ render_with_label(form.claimdef, tabindex=idx.next(), class="form-control") }} </p></div>
-    <div><p>{{ render_with_label(form.phase, tabindex=idx.next(), class="form-control") }} </p></div>
-    <div><p>{{ render_with_label(form.final_action, tabindex=idx.next(), class="form-control") }} </p></div>
-    <div><p>{{ render_with_label(form.damages, tabindex=idx.next(), class="form-control") }} </p></div>
-    <div><p>{{ render_with_label(form.notes, tabindex=idx.next(), class="form-control") }} </p></div>
+    <div class=block>{{ rf_w_label(form.status, tabindex=idx.next(), class="form-control") }} </div>
+    <div class=block>{{ rf_w_label(form.filed_on, tabindex=idx.next(), class="form-control") }} </div>
+    <div class=block>{{ rf_w_label(form.ent_type, tabindex=idx.next(), class="form-control") }} </div>
+    <div class=block>{{ rf_w_label(form.terminated_on, tabindex=idx.next(), class="form-control") }} </div>
+    <div class=block>{{ rf_w_label(form.term_de, tabindex=idx.next(), class="form-control") }} </div>
+    <div class=block>{{ rf_w_label(form.is_child, tabindex=idx.next(), class="form-control") }}   </div>
+    <div class=block>{{ rf_w_label(form.is_stayed, tabindex=idx.next(), class="form-control") }} </div>
 
-    <div><p><div>{{ render_field(form.save, class="btn") }}</div><div>
-	{{ render_field(form.cancel, class="btn") }} </div></p></div>
+    <div class=block>{{ rf_w_nullind(form.is_settled, rec.is_settled, tabindex=idx.next(), class="form-control") }} </div>
+    <div class=block>{{ rf_w_label(form.is_dj, tabindex=idx.next(), class="form-control") }} </div>
+    <div class=block>{{ rf_w_label(form.claimant, tabindex=idx.next(), class="form-control") }} </div>
+    <div class=block>{{ rf_w_label(form.claimdef, tabindex=idx.next(), class="form-control") }} </div>
+    <div class=block>{{ rf_w_label(form.phase, tabindex=idx.next(), class="form-control") }} </div>
+    <div class=block>{{ rf_w_label(form.final_action, tabindex=idx.next(), class="form-control") }} </div>
+    <div class=block>{{ rf_w_label(form.damages, tabindex=idx.next(), class="form-control") }} </div>
+    <div class=block>{{ rf_w_label(form.notes, tabindex=idx.next(), class="form-control") }} </div>
+
+    <div class=control-group>
+
+    <input type="submit" name="subbtn", tabindex=idx.next(), class="btn btn-primary", value="{{form.savenext}}">
+    <input type="submit" name="subbtn", tabindex=idx.next(), class="btn", value="{{form.saveselect}}">
+    <input type="submit" name="subbtn", tabindex=idx.next(), class="btn", value="{{form.cancel}}">
+
+    </div>
     
     </form>
   {% endif %}

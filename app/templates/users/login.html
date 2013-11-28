@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block title %} - Log In{% endblock %}
 {% block content %}
-{% from "forms/macros.html" import render_field %}
+{% from "forms/macros.html" import render_field,rf_w_label %}
 <form method="POST" action="." class="form form-horizontal">
   <!-- Form Name -->
   <legend>Log In</legend>
   {{ form.csrf_token }}
-  {{ render_field(form.name, class="input-xlarge",placeholder="username") }}
-  {{ render_field(form.password, class="input-xlarge", placeholder="password") }}
+  {{ rf_w_label(form.name, class="input-xlarge",placeholder="username") }}
+  {{ rf_w_label(form.password, class="input-xlarge", placeholder="password") }}
   <div class="control-group">
     <label class="control-label"></label>
     <div class="controls">

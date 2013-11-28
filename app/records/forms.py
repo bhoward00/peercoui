@@ -18,7 +18,6 @@ def pairup(mylist):
 class AutoIncrement():
     def __init__(self):
 	self.count = 1;
-	app.logger.debug("new ai")
     def next(self):
 	self.count = self.count +1
 	return self.count
@@ -28,9 +27,9 @@ class AutoIncrement():
 class SelectRecord(Form):
     #rid = RadioField("Record Select", choices=[], coerce=int,validators=[RequiredIfNot('newsub')])
     rid = RadioField("Record Select", choices=[], coerce=int,validators=[Optional()])
-    cosub = SubmitField("Check Out")
-    cisub = SubmitField("Check In")
-    newsub = SubmitField("Check Out New Record")
+    editsub = "Edit Record"
+    cisub = "Check In Record"
+    newsub = "Check Out New Record"
 
 #    def validate(self):
 #	if not Form.validate(self):
@@ -47,7 +46,7 @@ class SelectRecord(Form):
 
 
 
-class EditSomeRecords(Form):
+class EditForm(Form):
 	# rather than passing in an obj to populate, I want dynamic population for choices & defaults
 	# these are set in views.py after the form is created, before validate_on_submit
     status	    = SelectField("Status",
@@ -75,6 +74,9 @@ class EditSomeRecords(Form):
     claimant	    = BooleanField("Is Claimant?", validators=[InputRequired()])
     claimdef	    = BooleanField("Is Claim Def?",validators=[InputRequired()])
     notes	    = TextField("Notes", validators=[InputRequired(), Length(max=200)])
-    save	    = SubmitField("Save")
-    cancel	    = SubmitField("Cancel")
+    savenext	    = "Save & Edit Next Record"
+    saveselect	    = "Save & Select Record"
+    cancel	    = "Cancel changes"
+
+
 

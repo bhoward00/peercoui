@@ -5,26 +5,24 @@
 {% if not current_user.is_authenticated() %}
      <p>You are not logged in. Please <a href="/login">log in</a> or <a href="/register">sign up</a>.</p>
 {% else %}
-    <div class="main">
+    <div class=main>
     <form method="POST" action="/select/" class="form form-horizontal" name="select_view">
 	{{ form.hidden_tag() }}
 	<h1>Select a record to edit:</h1>
-	  {% if checked_out_records %}
-	    <div class=form-control>
-	    <h2>Checked out Records:</h2>
+	  {% if co_recs %}
+	    <legend>Checked out Records:</legend>
 	      <div>{{ render_field(form.rid) }}</div>
-              <div>{{ render_field(form.cosub, class="btn") }}</div><BR>
-	      <div>{{ render_field(form.cisub, class="btn") }}</div>
+	      <input type="submit" name="subbtn" class="btn" value="{{form.editsub}}">
+	      <input type="submit" name="subbtn" class="btn" value="{{form.cisub}}">
 	    </div>
 	  {% else %}
-	    <p>No records currently checked out</p>
+	    <div>No records currently checked out</div>
 	  {% endif %}
 	  {% if newrec %}
-	      <div><p>{{ render_field(form.newsub, class="btn btn-primary") }}</p></div>
+	      {#<div>{{ form.newsub(class="btn btn-primary", name="btn") }}</div>#}
+	      <input type="submit" name="subbtn" class="btn btn-primary" value="{{form.newsub}}">
 	  {% else %}
-	      <div>
-	      <h2>No new records available</h2>
-	      </div>
+	      <div> <h2>No new records available</h2> </div>
 	  {% endif %}
 
     </form> 

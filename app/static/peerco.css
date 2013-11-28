@@ -31,11 +31,15 @@ body {
 }
 
 .btn {
-    padding: 10px 10px 10px 10px; /* top right bottom left */
+    margin: 20px 20px 20px 0px; /* top right bottom left */
 }
 
 .btn-primary {
     .buttonBackground(Blue, DarkBlue);
+}
+
+.block {
+    margin: 0px 0px 10px 0px
 }
 
 

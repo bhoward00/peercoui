@@ -6,7 +6,7 @@ from app.records.models import Records, Edits
 from app.records.forms import EditForm, SelectRecord, AutoIncrement
 from db import session, Base
 from datetime import datetime
-import sqlalchemy
+from sqlalchemy import *
 
 
 
@@ -19,17 +19,35 @@ row2dict = lambda r: {c.name: getattr(r,c.name) for c in r.__table__.columns}
     
 
 def getNextRecord():
-    x = remainingRecords()
-    return x[0] if x else None
+    # really should do something that supports an arbitrary number of users here
+    asc = True
+    mid = False
+    if current_user.id % 4 == 0:
+	pass
+    elif current_user.id % 4 == 1:
+	asc = False
+    elif current_user.id % 4 == 2:
+	mid = True
+    else:
+	asc = False
+	mid = True
+    rs = remainingRecords(order_asc=asc)
+    return rs[len(rs)/2 if mid else 0]
 
-def remainingRecords():
+	
+	
+def remainingRecords(order_asc = True):
     # unreviewed records have no open edits - either in and out are both null (never edited) or 
     # both are not null (edit has closed)
-    return  session.query(Records).join(Edits).filter(Records.status=='unreviewed').\
-	filter( ( (Edits.date_out==None) & (Edits.date_in==None) ) | \
-	    ( (Edits.date_out!=None) & (Edits.date_in!=None ) )  ).all()
+    sq = session.query(Edits.rid).filter(Edits.date_in==None).filter(Edits.date_out!=None).subquery()
+    q = session.query(Records).filter(Records.status=='unreviewed').filter(not_(Records.id.in_(sq)))
+    if order_asc:
+	q = q.order_by(asc(Records.title))
+    else:
+	q = q.order_by(desc(Records.title))
+    return q.all()
 
-
+    
 def listToChoices(l, bAddNull=False):
     mychoices = []
     for x in l:
@@ -58,7 +76,7 @@ def select_view():
     if checkouts:
 	for (e,x) in checkouts:
 	    mychoices.append((x.id,"Peer %s: %s (%s in %s) checked out on %s"\
-		% (x.peerco, x.title, x.casenumber, x.district, e.date_out)))
+		% (x.peerco, x.title, x.casenumber, x.district, e.date_out.strftime('%Y-%m-%d %H:%S'))))
     form.rid.choices = mychoices
     newrec = True
     if form.validate_on_submit():
